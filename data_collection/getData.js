@@ -1,8 +1,8 @@
 const request = require('request-promise-native');
+const authorize = require('./auth.js');
 
-const getPlaylists = async function (username, authFunction, callback) {
-  let token = await authFunction();
-  let playlistsResponse = await get('users/'+username+'/playlists', token);
+const getPlaylists = async function (username, callback) {
+  let playlistsResponse = await get('users/'+username+'/playlists');
   for (playlist of playlistsResponse.items) {
     callback(playlist);
   }
@@ -12,14 +12,13 @@ const getPlaylists = async function (username, authFunction, callback) {
 }
 
 // target should look like { username: <username>, playlist: <playlistObject> }
-const getPlaylistTracks = async function (target, authFunction, callback) {
-  let token = await authFunction();
+const getPlaylistTracks = async function (target, callback) {
   let tracksResponse = await
     get('users/'+target.username+'/playlists/');
 }
 
-const get = async function (path, authFunction) {
-  let access_token = await authFunction();
+const get = async function (path) {
+  let access_token = await authorize();
   let options = {
     method: 'GET',
     url: 'https://api.spotify.com/v1/' + path,
