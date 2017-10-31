@@ -6,23 +6,40 @@ let authorize = async function () {
     let authorizationOptions = {
         method: 'POST',
         url: 'https://accounts.spotify.com/api/token',
-        headers: { 
+        headers: {
             'content-type': 'application/x-www-form-urlencoded',
-            authorization: 'Basic '+base64AuthString 
+            authorization: 'Basic '+base64AuthString
         },
         form: { grant_type: 'client_credentials' }
     }
     try {
-        let response = await request(authorizationOptions);
-        console.log(response);
+        let rawResponse = await request(authorizationOptions);
+        let response = JSON.parse(rawResponse);
+        return response.access_token;
     } catch (err) {
         console.log(err);
+        throw err;
     }
 }
 
-authorize();
+let getData = async function () {
+  let access_token = await authorize();
+  let options = {
+    method: 'GET',
+    url: 'https://api.spotify.com/v1/users/fifi-reid/playlists',
+    headers: { authorization: 'Bearer '+access_token }
+  }
+  try {
+    let response = JSON.parse(await request(options));
+    for (playlist of response.items) {
+      console.log(playlist.name);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+getData();
 
 
 //console.log("Loaded dependencies successfully.");
-
-
