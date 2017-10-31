@@ -3,6 +3,7 @@ const request = require('request-promise-native');
 
 // Use application credentials to get a temporary access token
 
+
 let authorize = async function () {
     let base64AuthString = new Buffer
       (secrets.client_id+":"+secrets.client_secret).toString('base64');
