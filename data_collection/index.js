@@ -6,10 +6,7 @@ const { getPlaylists } = require('./getData.js');
 const main = async function () {
   await authorization(); // run one initial auth call, which caches the token for later
   getPlaylists('fifi-reid', authorization, (playlist) => {
-    // console.log(playlist.name);
-  });
-  getPlaylists('fifi-reid', authorization, (playlist) => {
-    // console.log(playlist.name);
+    //console.log(playlist.name);
   });
 }
 
