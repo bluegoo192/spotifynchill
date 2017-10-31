@@ -1,5 +1,6 @@
 const secrets = require('./secrets.json');
 const request = require('request-promise-native');
+const { Client } = require('pg');
 
 let authorize = async function () {
     let base64AuthString = new Buffer(secrets.client_id+":"+secrets.client_secret).toString('base64');
@@ -36,7 +37,10 @@ let getData = async function () {
     }
   } catch (err) {
     console.log(err);
+    throw err;
   }
+  const client = new Client();
+  await client.connect();
 }
 
 getData();
