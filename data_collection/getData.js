@@ -6,22 +6,19 @@ const getPlaylists = async function (username, callback) {
   for (playlist of playlistsResponse.items) {
     callback(playlist);
   }
-  console.log(playlistsResponse.items[0]);
   // const client = new Client();
   // await client.connect();
 }
 
-// target should look like { username: <username>, playlist: <playlistObject> }
-const getPlaylistTracks = async function (target, callback) {
-  let tracksResponse = await
-    get('users/'+target.username+'/playlists/');
+const getPlaylistTracks = async function (playlist, callback) {
+  let tracksResponse = await get(playlist.tracks.href, true);
 }
 
-const get = async function (path) {
+const get = async function (path, isFullUrl) {
   let access_token = await authorize();
   let options = {
     method: 'GET',
-    url: 'https://api.spotify.com/v1/' + path,
+    url: isFullUrl ? path : 'https://api.spotify.com/v1/' + path,
     headers: { authorization: 'Bearer '+access_token }
   }
   try {
