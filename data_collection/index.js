@@ -6,7 +6,11 @@ const trackPrintString = "Retrieved tracks for ";
 
 const main = async function () {
   await authorization(); // cache auth token for later
-  const playlists = await getPlaylists('fifi-reid');
+  getPlaylistsAndTracks('fifi-reid');
+}
+
+const getPlaylistsAndTracks = async function (username) {
+  const playlists = await getPlaylists(username);
   for (playlist of playlists) {
     let tracks = [];
     getPlaylistTracks(playlist, (track) => {
