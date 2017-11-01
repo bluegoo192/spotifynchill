@@ -1,17 +1,20 @@
 const request = require('request-promise-native');
 const authorize = require('./auth.js');
 
-const getPlaylists = async function (username, callback) {
+const getPlaylists = async function (username) {
   let playlistsResponse = await get('users/'+username+'/playlists');
-  for (playlist of playlistsResponse.items) {
-    callback(playlist);
-  }
+  return playlistsResponse.items;
   // const client = new Client();
   // await client.connect();
 }
 
 const getPlaylistTracks = async function (playlist, callback) {
   let tracksResponse = await get(playlist.tracks.href, true);
+  // console.log(tracksResponse.items[0].track);
+  for (item of tracksResponse.items) {
+    callback(item.track);
+  }
+  return { playlist, tracksResponse };
 }
 
 const get = async function (path, isFullUrl) {
