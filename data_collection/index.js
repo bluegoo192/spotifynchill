@@ -1,6 +1,7 @@
 const authorization = require('./auth.js');
 const { Client } = require('pg');
 const { getPlaylists, getPlaylistTracks } = require('./getData.js');
+const { prettyPrintPlaylist } = require('./logging.js');
 
 const trackPrintString = "Retrieved tracks for ";
 
@@ -16,17 +17,9 @@ const getPlaylistsAndTracks = async function (username) {
     getPlaylistTracks(playlist, (track) => {
       tracks.push(track);
     }).then((result) => {
-      let offset = trackPrintString.length + result.playlist.name.length;
-      console.log(
-          trackPrintString+result.playlist.name+
-          prettyPrintTracks(tracks).padStart(process.stdout.columns-offset));
+      prettyPrintPlaylist(result.playlist, tracks);
     });
   }
-}
-
-const prettyPrintTracks = function (tracks) {
-  if (tracks.length < 3) return "(short)";
-  return "("+tracks[0].name+", "+tracks[1].name+", "+tracks[2].name+ "...)"
 }
 
 main();
