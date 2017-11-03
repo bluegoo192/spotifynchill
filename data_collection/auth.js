@@ -1,5 +1,6 @@
 const secrets = require('./secrets.json');
 const request = require('request-promise-native');
+const { printAuth } = require('./logging.js');
 
 const date = new Date();
 
@@ -16,7 +17,7 @@ let credentials = {
   parseResponse: async function (response) {
     this.token = response.access_token;
     await this.setExpiration(response.expires_in);
-    console.log("parsed.  token: "+this.token+"  expires: "+this.expires);
+    printAuth.success(this.token);
   }
 }
 
@@ -30,7 +31,7 @@ const authorize = async function () {
 
 // get token from API
 const getToken = async function () {
-  console.log('Getting token from API.  You should only see this once per hour.');
+  printAuth.getting();
   let base64AuthString = new Buffer
     (secrets.client_id+":"+secrets.client_secret).toString('base64');
   let authorizationOptions = {
