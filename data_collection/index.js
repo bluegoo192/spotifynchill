@@ -16,13 +16,23 @@ const main = async function () {
   await Promise.all(init);
   console.log("Database connected and initialized.");
   getPlaylistsAndTracks('fifi-reid');
-  dbclient.end();
+  //dbclient.end();
 }
 
 const getPlaylistsAndTracks = async function (username) {
+  const addUserQuery = {
+    text: 'INSERT INTO users (username) VALUES ($1) ON CONFLICT (username) DO NOTHING',
+    values: [username]
+  }
+  await dbclient.query(addUserQuery);
   const playlists = await getPlaylists(username);
   for (playlist of playlists) {
     let tracks = [];
+    const addPlaylistQuery = {
+      text: 'INSERT INTO playlists (id, name, owner) VALUES ($1,$2,$3) ON CONFLICT (id) DO UPDATE SET name = excluded.name, owner = excluded.owner',
+      values: [playlist.id, playlist.name, username]
+    }
+    await dbclient.query(addPlaylistQuery);
     getPlaylistTracks(playlist, (track) => {
       tracks.push(track);
     }).then((result) => {
