@@ -2,7 +2,7 @@ const authorization = require('./auth.js');
 const { Client } = require('pg');
 const { getPlaylists, getPlaylistTracks } = require('./getData.js');
 const { prettyPrintPlaylist } = require('./logging.js');
-const { setup } = require('../database_schema.js');
+const { setup, addItem } = require('../database_schema.js');
 
 const trackPrintString = "Retrieved tracks for ";
 const dbclient = new Client({ database: 'spotifynchill' });
@@ -35,6 +35,12 @@ const getPlaylistsAndTracks = async function (username) {
     await dbclient.query(addPlaylistQuery);
     getPlaylistTracks(playlist, (track) => {
       tracks.push(track);
+      const addTrackQuery = {
+        text: addItem.track,
+        values: [track.id, track.album.name, track.artists[0].name, track.explicit, track.name, track.popularity, null, null, null, null, null, null, null, null, null, null, null, null, null, null]
+      }
+      //console.log(track);
+      dbclient.query(addTrackQuery);
     }).then((result) => {
       prettyPrintPlaylist(result.playlist, tracks);
     });
