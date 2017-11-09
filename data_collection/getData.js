@@ -17,6 +17,10 @@ const getPlaylistTracks = async function (playlist, callback) {
   return { playlist, tracksResponse };
 }
 
+const getTrackFeatures = async function (trackId) {
+  return await get('audio-features/'+trackId);
+}
+
 const get = async function (path, isFullUrl) {
   let access_token = await authorize();
   let options = {
@@ -32,4 +36,4 @@ const get = async function (path, isFullUrl) {
   }
 }
 
-module.exports = { getPlaylists, getPlaylistTracks }
+module.exports = { getPlaylists, getPlaylistTracks, getTrackFeatures }

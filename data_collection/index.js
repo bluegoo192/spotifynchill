@@ -1,6 +1,6 @@
 const authorization = require('./auth.js');
 const { Client } = require('pg');
-const { getPlaylists, getPlaylistTracks } = require('./getData.js');
+const { getPlaylists, getPlaylistTracks, getTrackFeatures } = require('./getData.js');
 const { prettyPrintPlaylist } = require('./logging.js');
 const { setup, addItem } = require('../database_schema.js');
 
@@ -35,12 +35,18 @@ const getPlaylistsAndTracks = async function (username) {
     await dbclient.query(addPlaylistQuery);
     getPlaylistTracks(playlist, (track) => {
       tracks.push(track);
-      const addTrackQuery = {
-        text: addItem.track,
-        values: [track.id, track.album.name, track.artists[0].name, track.explicit, track.name, track.popularity, null, null, null, null, null, null, null, null, null, null, null, null, null, null]
-      }
+      getTrackFeatures(track.id).then((features) => {
+        const addTrackQuery = {
+          text: addItem.track,
+          values: [track.id, track.album.name, track.artists[0].name,
+            track.explicit, track.name, track.popularity, features.acousticness,
+            features.analysis_url, features.danceability, features.duration_ms,
+            features.energy, features.instrumentalness, features.key,
+            features.liveness, features.loudness, features.mode,
+            features.speechiness, features.tempo, features.time_signature, features.valence]
+        }
+      })
       //console.log(track);
-      dbclient.query(addTrackQuery);
     }).then((result) => {
       prettyPrintPlaylist(result.playlist, tracks);
     });
